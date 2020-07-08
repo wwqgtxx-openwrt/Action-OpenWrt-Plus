@@ -6,7 +6,7 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: Build Lean's OpenWrt
+name: Build Lean's OpenWrt Unstable
 
 on:
   repository_dispatch:
