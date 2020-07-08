@@ -25,7 +25,7 @@ on:
 #    types: started
 
 env:
-  REPO_URL: https://github.com/coolsnowwolf/openwrt
+  REPO_URL: https://github.com/wwqgtxx-openwrt/openwrt
   REPO_BRANCH: lede-17.01
   CONFIG_FILE: config/lean/x86_64-lean-openwrt-stable.config
   DIY_SH: scripts/lean-openwrt-stable.sh
