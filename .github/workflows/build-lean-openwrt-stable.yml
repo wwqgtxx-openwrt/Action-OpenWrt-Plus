@@ -6,7 +6,7 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: Build Lean's OpenWrt
+name: Build Lean's OpenWrt Stable
 
 on:
   repository_dispatch:
@@ -41,7 +41,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-18.04
-    if: github.event.repository.owner.id == github.event.sender.id
+#    if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
     - name: Checkout
