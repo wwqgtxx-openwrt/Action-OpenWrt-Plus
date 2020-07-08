@@ -16,19 +16,19 @@ on:
     branches:
       - master
     paths:
-      - 'config/lean/x86_64-lean-openwrt.config'
-      - '.github/workflows/build-lean-openwrt.yml'
-      - 'scripts/lean-openwrt.sh'
+      - 'config/lean/x86_64-lean-openwrt-stable.config'
+      - '.github/workflows/build-lean-openwrt-stable.yml'
+      - 'scripts/lean-openwrt-stable.sh'
 #  schedule:
 #    - cron: 0 8 * * 5
 #  watch:
 #    types: started
 
 env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_BRANCH: master
-  CONFIG_FILE: config/lean/x86_64-lean-openwrt.config
-  DIY_SH: scripts/lean-openwrt.sh
+  REPO_URL: https://github.com/coolsnowwolf/openwrt
+  REPO_BRANCH: lede-17.01
+  CONFIG_FILE: config/lean/x86_64-lean-openwrt-stable.config
+  DIY_SH: scripts/lean-openwrt-stable.sh
   FEEDS_CONF: feeds.conf.default
   SSH_ACTIONS: false
   KMODS_IN_FIRMWARE: true
@@ -137,12 +137,12 @@ jobs:
         then
             mkdir -p files/www/snapshots/targets
             cp -r bin/targets/$TARGET files/www/snapshots/targets
-            cp ../config/opkg/distfeeds-18.06-local.conf files/etc/opkg/distfeeds.conf
+            cp ../config/opkg/distfeeds-19.07-local.conf files/etc/opkg/distfeeds.conf
             sed -i "s/subtarget/$SUBTARGET/g" files/etc/opkg/distfeeds.conf
             sed -i "s/target\//$TARGET\//g" files/etc/opkg/distfeeds.conf
             sed -i "s/platform/$PLATFORM/g" files/etc/opkg/distfeeds.conf
         else
-            cp ../config/opkg/distfeeds-18.06-remote.conf files/etc/opkg/distfeeds.conf
+            cp ../config/opkg/distfeeds-19.07-remote.conf files/etc/opkg/distfeeds.conf
             sed -i "s/subtarget/$SUBTARGET/g" files/etc/opkg/distfeeds.conf
             sed -i "s/target\//$TARGET\//g" files/etc/opkg/distfeeds.conf
             sed -i "s/platform/$PLATFORM/g" files/etc/opkg/distfeeds.conf
