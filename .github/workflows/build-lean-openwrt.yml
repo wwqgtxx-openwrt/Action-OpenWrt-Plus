@@ -20,7 +20,7 @@ on:
       - '.github/workflows/build-lean-openwrt.yml'
       - 'scripts/lean-openwrt.sh'
   schedule:
-    - cron: 0 1 * * *
+    - cron: 0 18 * * *
 #  watch:
 #    types: started
 
@@ -151,6 +151,7 @@ jobs:
         wget https://github.com/wwqgtxx/clashr/releases/download/v1.0.0.2/clashr-linux-amd64-v1.0.0.2.gz
         gunzip clashr-linux-amd64-v1.0.0.2.gz
         chmod +x clashr-linux-amd64-v1.0.0.2
+        mkdir -p files/etc/openclash/core
         cp clashr-linux-amd64-v1.0.0.2 files/etc/openclash/core/clash
         cp clashr-linux-amd64-v1.0.0.2 files/etc/openclash/core/clash_game
         rm clashr-linux-amd64-v1.0.0.2
