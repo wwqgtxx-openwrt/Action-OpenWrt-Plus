@@ -28,6 +28,7 @@ env:
   REPO_URL: https://github.com/wwqgtxx-openwrt/openwrt
   REPO_BRANCH: lede-17.01
   CONFIG_FILE: config/lean/x86_64-lean-openwrt-stable.config
+  DEVICE: openwrt-x86-64
   DIY_SH: scripts/lean-openwrt-stable.sh
   FEEDS_CONF: feeds.conf.default
   SSH_ACTIONS: false
@@ -217,8 +218,15 @@ jobs:
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: ${{ env.DEVICE }}-rootfs-squashfs.img
+        name: ${{ env.DEVICE }}-rootfs-squashfs.img.gz
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-rootfs-squashfs.img.gz
+
+    - name: Upload Generic Ext4 Ext4 Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-rootfs-ext4.img.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-rootfs-ext4.img.gz
 
     - name: Upload Combined DVD Image
       uses: actions/upload-artifact@master
@@ -226,6 +234,13 @@ jobs:
       with:
         name: ${{ env.DEVICE }}-combined-squashfs.img.gz
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.img.gz
+
+    - name: Upload Combined DVD Ext4 Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-combined-ext4.img.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.img.gz
         
     - name: Upload Combined PVE/KVM Image
       uses: actions/upload-artifact@master
@@ -234,12 +249,26 @@ jobs:
         name: ${{ env.DEVICE }}-combined-squashfs.qcow2
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.qcow2
         
+    - name: Upload Combined PVE/KVM Ext4 Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-combined-ext4.qcow2
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.qcow2
+        
     - name: Upload Combined VirtualBox Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
         name: ${{ env.DEVICE }}-combined-squashfs.vdi
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.vdi
+        
+    - name: Upload Combined VirtualBox Ext4 Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-combined-ext4.vdi
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.vdi
         
     - name: Upload Combined VMware Image
       uses: actions/upload-artifact@master
@@ -248,12 +277,26 @@ jobs:
         name: ${{ env.DEVICE }}-combined-squashfs.vmdk
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.vmdk
         
+    - name: Upload Combined VMware Ext4 Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-combined-ext4.vmdk
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.vmdk
+        
     - name: Upload Combined Hyper-V Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
         name: ${{ env.DEVICE }}-combined-squashfs.vhdx
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.vhdx
+        
+    - name: Upload Combined Hyper-V Ext4 Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-combined-ext4.vhdx
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.vhdx
 
     - name: Upload GPT DVD Image
       uses: actions/upload-artifact@master
@@ -261,6 +304,13 @@ jobs:
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-squashfs.img.gz
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.img.gz
+
+    - name: Upload GPT DVD Ext4 Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-uefi-gpt-ext4.img.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.img.gz
         
     - name: Upload GPT PVE/KVM Image
       uses: actions/upload-artifact@master
@@ -269,12 +319,26 @@ jobs:
         name: ${{ env.DEVICE }}-uefi-gpt-squashfs.qcow2
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.qcow2
         
+    - name: Upload GPT PVE/KVM Ext4 Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-uefi-gpt-ext4.qcow2
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.qcow2
+        
     - name: Upload GPT VirtualBox Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-squashfs.vdi
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.vdi
+        
+    - name: Upload GPT VirtualBox Ext4 Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-uefi-gpt-ext4.vdi
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.vdi
         
     - name: Upload GPT VMware Image
       uses: actions/upload-artifact@master
@@ -283,12 +347,26 @@ jobs:
         name: ${{ env.DEVICE }}-uefi-gpt-squashfs.vmdk
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.vmdk
         
+    - name: Upload GPT VMware Ext4 Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-uefi-gpt-ext4.vmdk
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.vmdk
+        
     - name: Upload GPT Hyper-V Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-squashfs.vhdx
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.vhdx
+        
+    - name: Upload GPT Hyper-V Ext4 Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-uefi-gpt-ext4.vhdx
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gptext4.vhdx
 
     - name: Organize Files
       id: organize
