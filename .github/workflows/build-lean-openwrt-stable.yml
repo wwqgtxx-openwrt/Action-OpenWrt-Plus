@@ -32,10 +32,8 @@ env:
   FEEDS_CONF: feeds.conf.default
   SSH_ACTIONS: false
   KMODS_IN_FIRMWARE: true
-  UPLOAD_BIN_DIR: true
+  UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
-  UPLOAD_COWTRANSFER: false
-  UPLOAD_WETRANSFER: false
   TZ: Asia/Shanghai
 
 jobs:
@@ -155,6 +153,13 @@ jobs:
         echo "::set-env name=FILE_DATE::_$(date +"%Y%m%d%H%M")"
         echo "::set-output name=status::success"
         
+    - name: Upload Bin Directory
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
+      with:
+        name: openwrt-bin-directory${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+        path: openwrt/bin
+        
     - name: Deploy Packages-Server
       if: steps.generate.outputs.status == 'success'
       run: |
@@ -172,6 +177,13 @@ jobs:
       with:
         name: config.seed
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/config.seed
+
+    - name: Upload Images Sha256sums
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: sha256sums
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/sha256sums
         
     - name: Upload Packages-Server
       uses: actions/upload-artifact@master
@@ -180,19 +192,103 @@ jobs:
         name: packages-server
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/pre-packages-server
         
-    - name: Upload Images Sha256sums
+    - name: Upload Packages Info
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: sha256sums
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/sha256sums
+        name: ${{ env.DEVICE }}-generic.manifest
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-generic.manifest
         
-    - name: Upload Bin Directory
+    - name: Upload Kernel Packages
       uses: actions/upload-artifact@master
-      if: steps.generate.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
+      if: steps.generate.outputs.status == 'success'
       with:
-        name: openwrt-bin-directory${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-        path: openwrt/bin
+        name: kernel-packages
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/packages/
+        
+    - name: Upload RootFS Archive
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-generic-rootfs.tar.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-generic-rootfs.tar.gz
+
+    - name: Upload Generic SquashFS Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-rootfs-squashfs.img
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-rootfs-squashfs.img.gz
+
+    - name: Upload Combined DVD Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-combined-squashfs.img.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.img.gz
+        
+    - name: Upload Combined PVE/KVM Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-combined-squashfs.qcow2
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.qcow2
+        
+    - name: Upload Combined VirtualBox Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-combined-squashfs.vdi
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.vdi
+        
+    - name: Upload Combined VMware Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-combined-squashfs.vmdk
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.vmdk
+        
+    - name: Upload Combined Hyper-V Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-combined-squashfs.vhdx
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.vhdx
+
+    - name: Upload GPT DVD Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-uefi-gpt-squashfs.img.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.img.gz
+        
+    - name: Upload GPT PVE/KVM Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-uefi-gpt-squashfs.qcow2
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.qcow2
+        
+    - name: Upload GPT VirtualBox Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-uefi-gpt-squashfs.vdi
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.vdi
+        
+    - name: Upload GPT VMware Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-uefi-gpt-squashfs.vmdk
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.vmdk
+        
+    - name: Upload GPT Hyper-V Image
+      uses: actions/upload-artifact@master
+      if: steps.generate.outputs.status == 'success'
+      with:
+        name: ${{ env.DEVICE }}-uefi-gpt-squashfs.vhdx
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.vhdx
 
     - name: Organize Files
       id: organize
