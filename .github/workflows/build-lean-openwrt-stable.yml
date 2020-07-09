@@ -32,7 +32,8 @@ env:
   DIY_SH: scripts/lean-openwrt-stable.sh
   FEEDS_CONF: feeds.conf.default
   SSH_ACTIONS: false
-  KMODS_IN_FIRMWARE: true
+  KMODS_IN_FIRMWARE: false
+  BUILD_EXT4: false
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   TZ: Asia/Shanghai
@@ -93,6 +94,10 @@ jobs:
         if "$KMODS_IN_FIRMWARE" = 'true'
         then
             echo "CONFIG_ALL_KMODS=y" >> .config
+        fi
+        if "$BUILD_EXT4" = 'true'
+        then
+            echo "CONFIG_TARGET_ROOTFS_EXT4FS=y" >> .config
         fi
         make defconfig
         make download -j8
@@ -230,7 +235,7 @@ jobs:
 
     - name: Upload Generic Ext4 Ext4 Image
       uses: actions/upload-artifact@master
-      if: steps.generate.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-rootfs-ext4${{ env.FILE_DATE }}.img.gz
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-rootfs-ext4.img.gz
@@ -244,7 +249,7 @@ jobs:
 
     - name: Upload Combined DVD Ext4 Image
       uses: actions/upload-artifact@master
-      if: steps.generate.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-combined-ext4${{ env.FILE_DATE }}.img.gz
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.img.gz
@@ -258,7 +263,7 @@ jobs:
         
     - name: Upload Combined PVE/KVM Ext4 Image
       uses: actions/upload-artifact@master
-      if: steps.generate.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-combined-ext4${{ env.FILE_DATE }}.qcow2
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.qcow2
@@ -272,7 +277,7 @@ jobs:
         
     - name: Upload Combined VirtualBox Ext4 Image
       uses: actions/upload-artifact@master
-      if: steps.generate.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-combined-ext4${{ env.FILE_DATE }}.vdi
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.vdi
@@ -286,7 +291,7 @@ jobs:
         
     - name: Upload Combined VMware Ext4 Image
       uses: actions/upload-artifact@master
-      if: steps.generate.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-combined-ext4${{ env.FILE_DATE }}.vmdk
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.vmdk
@@ -300,7 +305,7 @@ jobs:
         
     - name: Upload Combined Hyper-V Ext4 Image
       uses: actions/upload-artifact@master
-      if: steps.generate.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-combined-ext4${{ env.FILE_DATE }}.vhdx
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.vhdx
@@ -314,7 +319,7 @@ jobs:
 
     - name: Upload GPT DVD Ext4 Image
       uses: actions/upload-artifact@master
-      if: steps.generate.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-ext4${{ env.FILE_DATE }}.img.gz
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.img.gz
@@ -328,7 +333,7 @@ jobs:
         
     - name: Upload GPT PVE/KVM Ext4 Image
       uses: actions/upload-artifact@master
-      if: steps.generate.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-ext4${{ env.FILE_DATE }}.qcow2
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.qcow2
@@ -342,7 +347,7 @@ jobs:
         
     - name: Upload GPT VirtualBox Ext4 Image
       uses: actions/upload-artifact@master
-      if: steps.generate.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-ext4${{ env.FILE_DATE }}.vdi
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.vdi
@@ -356,7 +361,7 @@ jobs:
         
     - name: Upload GPT VMware Ext4 Image
       uses: actions/upload-artifact@master
-      if: steps.generate.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-ext4${{ env.FILE_DATE }}.vmdk
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.vmdk
@@ -370,7 +375,7 @@ jobs:
         
     - name: Upload GPT Hyper-V Ext4 Image
       uses: actions/upload-artifact@master
-      if: steps.generate.outputs.status == 'success'
+      if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-ext4${{ env.FILE_DATE }}.vhdx
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.vhdx
