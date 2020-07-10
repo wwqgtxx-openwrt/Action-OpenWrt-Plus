@@ -32,7 +32,7 @@ env:
   DIY_SH: scripts/lean-openwrt-stable.sh
   FEEDS_CONF: feeds.conf.default
   SSH_ACTIONS: false
-  KMODS_IN_FIRMWARE: false
+  KMODS_IN_FIRMWARE: true
   BUILD_EXT4: false
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true

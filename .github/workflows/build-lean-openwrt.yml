@@ -32,7 +32,7 @@ env:
   DIY_SH: scripts/lean-openwrt.sh
   FEEDS_CONF: feeds.conf.default
   SSH_ACTIONS: false
-  KMODS_IN_FIRMWARE: false
+  KMODS_IN_FIRMWARE: true
   BUILD_EXT4: false
   UPLOAD_BIN_DIR: true
   UPLOAD_FIRMWARE: true
@@ -202,8 +202,8 @@ jobs:
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: ${{ env.DEVICE }}-generic.manifest
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-generic.manifest
+        name: ${{ env.DEVICE }}.manifest
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}.manifest
         
     - name: Upload Kernel Packages
       uses: actions/upload-artifact@master
@@ -216,162 +216,162 @@ jobs:
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: ${{ env.DEVICE }}-generic-rootfs${{ env.FILE_DATE }}.tar.gz
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-generic-rootfs.tar.gz
+        name: ${{ env.DEVICE }}-rootfs${{ env.FILE_DATE }}.tar.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-rootfs.tar.gz
 
     - name: Upload Generic SquashFS Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: ${{ env.DEVICE }}-rootfs-squashfs${{ env.FILE_DATE }}.img.gz
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-rootfs-squashfs.img.gz
+        name: ${{ env.DEVICE }}-squashfs-rootfs${{ env.FILE_DATE }}.img.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-squashfs-rootfs.img.gz
 
     - name: Upload Generic Ext4 Ext4 Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
-        name: ${{ env.DEVICE }}-rootfs-ext4${{ env.FILE_DATE }}.img.gz
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-rootfs-ext4.img.gz
+        name: ${{ env.DEVICE }}-ext4-rootfs${{ env.FILE_DATE }}.img.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-ext4-rootfs.img.gz
 
     - name: Upload Combined DVD Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: ${{ env.DEVICE }}-combined-squashfs${{ env.FILE_DATE }}.img.gz
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.img.gz
+        name: ${{ env.DEVICE }}-squashfs-combined${{ env.FILE_DATE }}.img.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-squashfs-combined.img.gz
 
     - name: Upload Combined DVD Ext4 Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
-        name: ${{ env.DEVICE }}-combined-ext4${{ env.FILE_DATE }}.img.gz
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.img.gz
+        name: ${{ env.DEVICE }}-ext4-combined${{ env.FILE_DATE }}.img.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-ext4-combined.img.gz
         
     - name: Upload Combined PVE/KVM Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: ${{ env.DEVICE }}-combined-squashfs${{ env.FILE_DATE }}.qcow2
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.qcow2
+        name: ${{ env.DEVICE }}-squashfs-combined${{ env.FILE_DATE }}.qcow2.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-squashfs-combined.qcow2.gz
         
     - name: Upload Combined PVE/KVM Ext4 Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
-        name: ${{ env.DEVICE }}-combined-ext4${{ env.FILE_DATE }}.qcow2
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.qcow2
+        name: ${{ env.DEVICE }}-ext4-combined${{ env.FILE_DATE }}.qcow2.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-ext4-combined.qcow2.gz
         
     - name: Upload Combined VirtualBox Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: ${{ env.DEVICE }}-combined-squashfs${{ env.FILE_DATE }}.vdi
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.vdi
+        name: ${{ env.DEVICE }}-squashfs-combined${{ env.FILE_DATE }}.vdi.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-squashfs-combined.vdi.gz
         
     - name: Upload Combined VirtualBox Ext4 Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
-        name: ${{ env.DEVICE }}-combined-ext4${{ env.FILE_DATE }}.vdi
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.vdi
+        name: ${{ env.DEVICE }}-ext4-combined${{ env.FILE_DATE }}.vdi.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-ext4-combined.vdi.gz
         
     - name: Upload Combined VMware Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: ${{ env.DEVICE }}-combined-squashfs${{ env.FILE_DATE }}.vmdk
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.vmdk
+        name: ${{ env.DEVICE }}-squashfs-combined${{ env.FILE_DATE }}.vmdk
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-squashfs-combined.vmdk
         
     - name: Upload Combined VMware Ext4 Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
-        name: ${{ env.DEVICE }}-combined-ext4${{ env.FILE_DATE }}.vmdk
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.vmdk
+        name: ${{ env.DEVICE }}-ext4-combined${{ env.FILE_DATE }}.vmdk.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-ext4-combined.vmdk.gz
         
     - name: Upload Combined Hyper-V Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: ${{ env.DEVICE }}-combined-squashfs${{ env.FILE_DATE }}.vhdx
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.vhdx
+        name: ${{ env.DEVICE }}-squashfs-combined${{ env.FILE_DATE }}.vhdx.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-squashfs-combined.vhdx.gz
         
     - name: Upload Combined Hyper-V Ext4 Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
-        name: ${{ env.DEVICE }}-combined-ext4${{ env.FILE_DATE }}.vhdx
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.vhdx
+        name: ${{ env.DEVICE }}-ext4-combined${{ env.FILE_DATE }}.vhdx.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-ext4-combined.vhdx.gz
 
-    - name: Upload GPT DVD Image
+    - name: Upload EFI DVD Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: ${{ env.DEVICE }}-uefi-gpt-squashfs${{ env.FILE_DATE }}.img.gz
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.img.gz
+        name: ${{ env.DEVICE }}-squashfs-combined-efi${{ env.FILE_DATE }}.img.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-squashfs-combined-efi.img.gz
 
-    - name: Upload GPT DVD Ext4 Image
+    - name: Upload EFI DVD Ext4 Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
-        name: ${{ env.DEVICE }}-uefi-gpt-ext4${{ env.FILE_DATE }}.img.gz
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.img.gz
+        name: ${{ env.DEVICE }}-ext4-combined-efi${{ env.FILE_DATE }}.img.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-ext4-combined-efi.img.gz
         
-    - name: Upload GPT PVE/KVM Image
+    - name: Upload EFI PVE/KVM Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: ${{ env.DEVICE }}-uefi-gpt-squashfs${{ env.FILE_DATE }}.qcow2
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.qcow2
+        name: ${{ env.DEVICE }}-squashfs-combined-efi${{ env.FILE_DATE }}.qcow2.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-squashfs-combined-efi.qcow2.gz
         
-    - name: Upload GPT PVE/KVM Ext4 Image
+    - name: Upload EFI PVE/KVM Ext4 Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
-        name: ${{ env.DEVICE }}-uefi-gpt-ext4${{ env.FILE_DATE }}.qcow2
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.qcow2
+        name: ${{ env.DEVICE }}-ext4-combined-efi${{ env.FILE_DATE }}.qcow2.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-ext4-combined-efi.qcow2.gz
         
-    - name: Upload GPT VirtualBox Image
+    - name: Upload EFI VirtualBox Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: ${{ env.DEVICE }}-uefi-gpt-squashfs${{ env.FILE_DATE }}.vdi
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.vdi
+        name: ${{ env.DEVICE }}-squashfs-combined-efi${{ env.FILE_DATE }}.vdi.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-squashfs-combined-efi.vdi.gz
         
-    - name: Upload GPT VirtualBox Ext4 Image
+    - name: Upload EFI VirtualBox Ext4 Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
-        name: ${{ env.DEVICE }}-uefi-gpt-ext4${{ env.FILE_DATE }}.vdi
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.vdi
+        name: ${{ env.DEVICE }}-ext4-combined-efi${{ env.FILE_DATE }}.vdi.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-ext4-combined-efi.vdi.gz
         
-    - name: Upload GPT VMware Image
+    - name: Upload EFI VMware Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: ${{ env.DEVICE }}-uefi-gpt-squashfs${{ env.FILE_DATE }}.vmdk
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.vmdk
+        name: ${{ env.DEVICE }}-squashfs-combined-efi${{ env.FILE_DATE }}.vmdk
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-squashfs-combined-efi.vmdk
         
-    - name: Upload GPT VMware Ext4 Image
+    - name: Upload EFI VMware Ext4 Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
-        name: ${{ env.DEVICE }}-uefi-gpt-ext4${{ env.FILE_DATE }}.vmdk
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.vmdk
+        name: ${{ env.DEVICE }}-ext4-combined-efi${{ env.FILE_DATE }}.vmdk.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-ext4-combined-efi.vmdk.gz
         
-    - name: Upload GPT Hyper-V Image
+    - name: Upload EFI Hyper-V Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: ${{ env.DEVICE }}-uefi-gpt-squashfs${{ env.FILE_DATE }}.vhdx
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.vhdx
+        name: ${{ env.DEVICE }}-squashfs-combined-efi${{ env.FILE_DATE }}.vhdx.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-squashfs-combined-efi.vhdx.gz
         
-    - name: Upload GPT Hyper-V Ext4 Image
+    - name: Upload EFI Hyper-V Ext4 Image
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
-        name: ${{ env.DEVICE }}-uefi-gpt-ext4${{ env.FILE_DATE }}.vhdx
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.vhdx
+        name: ${{ env.DEVICE }}-ext4-combined-efi${{ env.FILE_DATE }}.vhdx.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-ext4-combined-efi.vhdx.gz
 
 
     - name: Organize Files
