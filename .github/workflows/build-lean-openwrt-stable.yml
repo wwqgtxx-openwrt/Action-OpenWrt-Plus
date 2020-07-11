@@ -10,6 +10,7 @@ name: Build Lean's OpenWrt Stable
 
 on:
   repository_dispatch:
+  workflow_dispatch:
   release:
     types: published
   push:
@@ -28,7 +29,7 @@ env:
   REPO_URL: https://github.com/wwqgtxx-openwrt/openwrt
   REPO_BRANCH: lede-17.01
   CONFIG_FILE: config/lean/x86_64-lean-openwrt-stable.config
-  DEVICE: openwrt-x86-64-generic
+  DEVICE: openwrt-x86-64
   DIY_SH: scripts/lean-openwrt-stable.sh
   FEEDS_CONF: feeds.conf.default
   SSH_ACTIONS: false
@@ -188,8 +189,8 @@ jobs:
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: config.buildinfo
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/config.buildinfo
+        name: config.seed
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/config.seed
 
     - name: Upload Images Sha256sums
       uses: actions/upload-artifact@master
@@ -209,8 +210,8 @@ jobs:
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: ${{ env.DEVICE }}.manifest
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}.manifest
+        name: ${{ env.DEVICE }}-generic.manifest
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-generic.manifest
         
     - name: Upload Kernel Packages
       uses: actions/upload-artifact@master
@@ -223,8 +224,8 @@ jobs:
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: ${{ env.DEVICE }}-rootfs.tar.gz
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-rootfs.tar.gz
+        name: ${{ env.DEVICE }}-generic-rootfs.tar.gz
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-generic-rootfs.tar.gz
 
     - name: Upload Generic SquashFS Image
       uses: actions/upload-artifact@master

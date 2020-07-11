@@ -10,6 +10,7 @@ name: Build Lean's OpenWrt Unstable
 
 on:
   repository_dispatch:
+  workflow_dispatch:
   release:
     types: published
   push:
@@ -181,8 +182,8 @@ jobs:
       uses: actions/upload-artifact@master
       if: steps.generate.outputs.status == 'success'
       with:
-        name: config.seed
-        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/config.seed
+        name: config.buildinfo
+        path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/config.buildinfo
 
     - name: Upload Images Sha256sums
       uses: actions/upload-artifact@master
