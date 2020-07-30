@@ -54,7 +54,7 @@ jobs:
       run: |
         sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
         sudo -E apt-get -qq update
-        sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf python2.7 python3 wget
+        sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf python2.7 python3 wget rsync
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
         sudo timedatectl set-timezone "$TZ"
@@ -152,13 +152,13 @@ jobs:
             sed -i "s/target\//$TARGET\//g" files/etc/opkg/distfeeds.conf
             sed -i "s/platform/$PLATFORM/g" files/etc/opkg/distfeeds.conf
         fi
-        wget https://github.com/wwqgtxx/clashr/releases/download/v1.0.0.2/clashr-linux-amd64-v1.0.0.2.gz
-        gunzip clashr-linux-amd64-v1.0.0.2.gz
-        chmod +x clashr-linux-amd64-v1.0.0.2
+        wget https://github.com/wwqgtxx/clashr/releases/download/v1.0.0.3/clashr-linux-amd64-v1.0.0.3.gz
+        gunzip clashr-linux-amd64-v1.0.0.3.gz
+        chmod +x clashr-linux-amd64-v1.0.0.3
         mkdir -p files/etc/openclash/core
-        cp clashr-linux-amd64-v1.0.0.2 files/etc/openclash/core/clash
-        cp clashr-linux-amd64-v1.0.0.2 files/etc/openclash/core/clash_game
-        rm clashr-linux-amd64-v1.0.0.2
+        cp clashr-linux-amd64-v1.0.0.3 files/etc/openclash/core/clash
+        cp clashr-linux-amd64-v1.0.0.3 files/etc/openclash/core/clash_game
+        rm clashr-linux-amd64-v1.0.0.3
         make package/install -j$(nproc) || make package/install -j1 V=s
         make target/install -j$(nproc) || make target/install -j1 V=s
         make checksum
