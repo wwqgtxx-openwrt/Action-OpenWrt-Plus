@@ -46,7 +46,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@master
+      uses: actions/checkout@main
 
     - name: Initialization Environment
       env:
@@ -54,7 +54,7 @@ jobs:
       run: |
         sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
         sudo -E apt-get -qq update
-        sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf python2.7 python3 wget rsync
+        sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf python2.7 python3 wget rsync swig
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
         sudo timedatectl set-timezone "$TZ"
@@ -85,7 +85,7 @@ jobs:
         ../$DIY_SH
 
     - name: SSH Connection To Actions
-      uses: P3TERX/debugger-action@master
+      uses: P3TERX/debugger-action@main
       if: env.SSH_ACTIONS == 'true' || contains(github.event.action, 'ssh')
 
     - name: Download Package
@@ -168,7 +168,7 @@ jobs:
         echo "::set-output name=status::success"
         
     - name: Upload Bin Directory
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
       with:
         name: openwrt-bin-directory${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
@@ -186,196 +186,196 @@ jobs:
         zip -q -r packages-server.zip pre-packages-server/server
         
     - name: Upload Config
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success'
       with:
         name: config.seed
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/config.seed
 
     - name: Upload Images Sha256sums
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success'
       with:
         name: sha256sums
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/sha256sums
         
     - name: Upload Packages-Server
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success'
       with:
         name: packages-server
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/pre-packages-server
         
     - name: Upload Packages Info
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success'
       with:
         name: ${{ env.DEVICE }}-generic.manifest
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-generic.manifest
         
     - name: Upload Kernel Packages
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success'
       with:
         name: kernel-packages
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/packages/
         
     - name: Upload RootFS Archive
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success'
       with:
         name: ${{ env.DEVICE }}-generic-rootfs.tar.gz
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-generic-rootfs.tar.gz
 
     - name: Upload Generic SquashFS Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success'
       with:
         name: ${{ env.DEVICE }}-rootfs-squashfs${{ env.FILE_DATE }}.img.gz
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-rootfs-squashfs.img.gz
 
     - name: Upload Generic Ext4 Ext4 Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-rootfs-ext4${{ env.FILE_DATE }}.img.gz
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-rootfs-ext4.img.gz
 
     - name: Upload Combined DVD Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success'
       with:
         name: ${{ env.DEVICE }}-combined-squashfs${{ env.FILE_DATE }}.img.gz
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.img.gz
 
     - name: Upload Combined DVD Ext4 Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-combined-ext4${{ env.FILE_DATE }}.img.gz
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.img.gz
         
     - name: Upload Combined PVE/KVM Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success'
       with:
         name: ${{ env.DEVICE }}-combined-squashfs${{ env.FILE_DATE }}.qcow2
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.qcow2
         
     - name: Upload Combined PVE/KVM Ext4 Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-combined-ext4${{ env.FILE_DATE }}.qcow2
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.qcow2
         
     - name: Upload Combined VirtualBox Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success'
       with:
         name: ${{ env.DEVICE }}-combined-squashfs${{ env.FILE_DATE }}.vdi
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.vdi
         
     - name: Upload Combined VirtualBox Ext4 Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-combined-ext4${{ env.FILE_DATE }}.vdi
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.vdi
         
     - name: Upload Combined VMware Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success'
       with:
         name: ${{ env.DEVICE }}-combined-squashfs${{ env.FILE_DATE }}.vmdk
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.vmdk
         
     - name: Upload Combined VMware Ext4 Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-combined-ext4${{ env.FILE_DATE }}.vmdk
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.vmdk
         
     - name: Upload Combined Hyper-V Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success'
       with:
         name: ${{ env.DEVICE }}-combined-squashfs${{ env.FILE_DATE }}.vhdx
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-squashfs.vhdx
         
     - name: Upload Combined Hyper-V Ext4 Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-combined-ext4${{ env.FILE_DATE }}.vhdx
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-combined-ext4.vhdx
 
     - name: Upload GPT DVD Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success'
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-squashfs${{ env.FILE_DATE }}.img.gz
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.img.gz
 
     - name: Upload GPT DVD Ext4 Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-ext4${{ env.FILE_DATE }}.img.gz
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.img.gz
         
     - name: Upload GPT PVE/KVM Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success'
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-squashfs${{ env.FILE_DATE }}.qcow2
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.qcow2
         
     - name: Upload GPT PVE/KVM Ext4 Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-ext4${{ env.FILE_DATE }}.qcow2
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.qcow2
         
     - name: Upload GPT VirtualBox Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success'
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-squashfs${{ env.FILE_DATE }}.vdi
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.vdi
         
     - name: Upload GPT VirtualBox Ext4 Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-ext4${{ env.FILE_DATE }}.vdi
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.vdi
         
     - name: Upload GPT VMware Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success'
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-squashfs${{ env.FILE_DATE }}.vmdk
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.vmdk
         
     - name: Upload GPT VMware Ext4 Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-ext4${{ env.FILE_DATE }}.vmdk
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-ext4.vmdk
         
     - name: Upload GPT Hyper-V Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success'
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-squashfs${{ env.FILE_DATE }}.vhdx
         path: openwrt/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/${{ env.DEVICE }}-uefi-gpt-squashfs.vhdx
         
     - name: Upload GPT Hyper-V Ext4 Image
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.generate.outputs.status == 'success' && env.BUILD_EXT4 == 'true'
       with:
         name: ${{ env.DEVICE }}-uefi-gpt-ext4${{ env.FILE_DATE }}.vhdx
@@ -391,7 +391,7 @@ jobs:
         echo "::set-output name=status::success"
 
     - name: Upload Firmware Directory
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@main
       if: steps.organize.outputs.status == 'success' && !cancelled()
       with:
         name: openwrt-firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
