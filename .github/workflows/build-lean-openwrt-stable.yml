@@ -152,13 +152,17 @@ jobs:
             sed -i "s/target\//$TARGET\//g" files/etc/opkg/distfeeds.conf
             sed -i "s/platform/$PLATFORM/g" files/etc/opkg/distfeeds.conf
         fi
-        wget https://github.com/wwqgtxx/clashr/releases/download/v1.0.0.3/clashr-linux-amd64-v1.0.0.3.gz
-        gunzip clashr-linux-amd64-v1.0.0.3.gz
-        chmod +x clashr-linux-amd64-v1.0.0.3
+        wget https://github.com/wwqgtxx/clashr/releases/download/v1.2.0.1/clashr-linux-amd64-v1.2.0.1.gz
+        wget https://github.com/wwqgtxx/clashr/releases/download/v1.1.0.1-tun/clashr-linux-amd64-v1.1.0.1-tun.gz
+        gunzip clashr-linux-amd64-v1.2.0.1.gz
+        gunzip clashr-linux-amd64-v1.1.0.1-tun.gz
+        chmod +x clashr-linux-amd64-v1.2.0.1
+        chmod +x clashr-linux-amd64-v1.1.0.1-tun
         mkdir -p files/etc/openclash/core
-        cp clashr-linux-amd64-v1.0.0.3 files/etc/openclash/core/clash
-        cp clashr-linux-amd64-v1.0.0.3 files/etc/openclash/core/clash_game
-        rm clashr-linux-amd64-v1.0.0.3
+        cp clashr-linux-amd64-v1.2.0.1 files/etc/openclash/core/clash
+        cp clashr-linux-amd64-v1.1.0.1-tun files/etc/openclash/core/clash_game
+        rm clashr-linux-amd64-v1.2.0.1
+        rm clashr-linux-amd64-v1.1.0.1-tun
         make package/install -j$(nproc) || make package/install -j1 V=s
         make target/install -j$(nproc) || make target/install -j1 V=s
         make checksum

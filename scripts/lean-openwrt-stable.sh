@@ -24,6 +24,10 @@ pushd package/community
 # Add Lienol's Packages
 git clone --depth=1 https://github.com/wwqgtxx-openwrt/lienol-package
 
+# Add luci-app-vssr <M>
+git clone --depth=1 https://github.com/wwqgtxx-openwrt/luci-app-vssr
+git clone --depth=1 https://github.com/wwqgtxx-openwrt/lua-maxminddb
+
 # Add mentohust & luci-app-mentohust.
 git clone --depth=1 https://github.com/wwqgtxx-openwrt/luci-app-mentohust
 git clone --depth=1 https://github.com/wwqgtxx-openwrt/MentoHUST-OpenWrt-ipk
@@ -59,12 +63,15 @@ git clone --depth=1 https://github.com/wwqgtxx-openwrt/node-request
 git clone --depth=1 https://github.com/wwqgtxx-openwrt/luci-app-jd-dailybonus
 
 # Add luci-theme-argon
-#git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon
-#rm -rf ../lean/luci-theme-argon
+git clone --depth=1 -b 18.06 https://github.com/wwqgtxx-openwrt/luci-theme-argon
+git clone --depth=1 https://github.com/wwqgtxx-openwrt/luci-app-argon-config
+rm -rf ../lean/luci-theme-argon
 
 # Add tmate
-svn co https://github.com/wwqgtxx-openwrt/project-openwrt/trunk/package/ctcgfw/tmate
-svn co https://github.com/wwqgtxx-openwrt/project-openwrt/trunk/package/ctcgfw/msgpack-c
+git clone --depth=1 https://github.com/wwqgtxx-openwrt/openwrt-tmate
+
+# Add subconverter
+git clone --depth=1 https://github.com/wwqgtxx-openwrt/openwrt-subconverter
 
 # Add gotop
 svn co https://github.com/wwqgtxx-openwrt/project-openwrt/trunk/package/ctcgfw/gotop
@@ -88,8 +95,12 @@ git clone --depth=1 https://github.com/wwqgtxx-openwrt/luci-udptools
 git clone --depth=1 https://github.com/wwqgtxx-openwrt/OpenAppFilter
 popd
 
-# Fix default-settings for local opkg sources
-sed -i '/http/d' package/lean/default-settings/files/zzz-default-settings
+# Mod zzz-default-settings
+pushd package/lean/default-settings/files
+sed -i "/commit luci/i\uci set luci.main.mediaurlbase='/luci-static/argon'" zzz-default-settings
+sed -i '/http/d' zzz-default-settings
+sed -i '/exit/i\chmod +x /bin/ipv6-helper' zzz-default-settings
+popd
 
 # Fix libssh
 #pushd feeds/packages/libs
@@ -97,8 +108,17 @@ sed -i '/http/d' package/lean/default-settings/files/zzz-default-settings
 #svn co https://github.com/openwrt/packages/trunk/libs/libssh
 #popd
 
+# Use Lienol's https-dns-proxy package
+pushd feeds/packages/net
+rm -rf https-dns-proxy
+svn co https://github.com/wwqgtxx-openwrt/lienol-package/trunk/net/https-dns-proxy
+popd
+
 # Add po2lmo
 git clone https://github.com/wwqgtxx-openwrt/po2lmo.git
 pushd po2lmo
 make && sudo make install
 popd
+
+# Change default shell to zsh
+sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
