@@ -33,6 +33,7 @@ env:
   DIY_SH: scripts/lean-openwrt-stable.sh
   FEEDS_CONF: feeds.conf.default
   SSH_ACTIONS: false
+  IPV6MOD_IN_FIRMWARE: true
   KMODS_IN_FIRMWARE: true
   BUILD_EXT4: false
   UPLOAD_BIN_DIR: false
@@ -80,6 +81,13 @@ jobs:
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
         [ -e files ] && mv files $OPENWRTROOT/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE $OPENWRTROOT/.config
+        cat config/lean/x86/x86-lean-extra-stable.config >> $OPENWRTROOT/.config
+        chmod +x scripts/*.sh
+        cd $OPENWRTROOT
+        ../$DIY_SH
+        ../scripts/preset-clash-core.sh amd64
+        ../scripts/preset-terminal-tools.sh
+        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE $OPENWRTROOT/.config
         chmod +x $DIY_SH
         cd $OPENWRTROOT
         ../$DIY_SH
@@ -116,21 +124,17 @@ jobs:
         make diffconfig
         make package/compile -j$(nproc) IGNORE_ERRORS=1 || make package/compile -j1 V=s IGNORE_ERRORS=1
         make package/index
-        echo "::set-output name=status::success"
-
-    - name: Set Environment Variable
-      if: steps.compile.outputs.status == 'success'
-      run: |
         cd $OPENWRTROOT/bin/packages/*
         PLATFORM=$(basename `pwd`)
-        echo "::set-env name=PLATFORM::$PLATFORM"
+        echo "PLATFORM=$PLATFORM" >> $GITHUB_ENV
         cd $OPENWRTROOT/bin/targets/*
         TARGET=$(basename `pwd`)
-        echo "::set-env name=TARGET::$TARGET"
+        echo "TARGET=$TARGET" >> $GITHUB_ENV
         cd *
         SUBTARGET=$(basename `pwd`)
-        echo "::set-env name=SUBTARGET::$SUBTARGET"
-        echo "::set-env name=FIRMWARE::$PWD"
+        echo "SUBTARGET=$SUBTARGET" >> $GITHUB_ENV
+        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+        echo "::set-output name=status::success"
 
     - name: Generate Firmware
       if: steps.compile.outputs.status == 'success'
@@ -152,17 +156,15 @@ jobs:
             sed -i "s/target\//$TARGET\//g" files/etc/opkg/distfeeds.conf
             sed -i "s/platform/$PLATFORM/g" files/etc/opkg/distfeeds.conf
         fi
-        wget https://github.com/wwqgtxx/clashr/releases/download/v1.2.0.1/clashr-linux-amd64-v1.2.0.1.gz
-        wget https://github.com/wwqgtxx/clashr/releases/download/v1.1.0.1-tun/clashr-linux-amd64-v1.1.0.1-tun.gz
-        gunzip clashr-linux-amd64-v1.2.0.1.gz
-        gunzip clashr-linux-amd64-v1.1.0.1-tun.gz
-        chmod +x clashr-linux-amd64-v1.2.0.1
-        chmod +x clashr-linux-amd64-v1.1.0.1-tun
-        mkdir -p files/etc/openclash/core
-        cp clashr-linux-amd64-v1.2.0.1 files/etc/openclash/core/clash
-        cp clashr-linux-amd64-v1.1.0.1-tun files/etc/openclash/core/clash_game
-        rm clashr-linux-amd64-v1.2.0.1
-        rm clashr-linux-amd64-v1.1.0.1-tun
+        if "$IPV6MOD_IN_FIRMWARE" = 'true'
+        then
+            mkdir -p files/www/ipv6-modules
+            cp bin/packages/$PLATFORM/luci/luci-proto-ipv6* files/www/ipv6-modules
+            cp bin/packages/$PLATFORM/base/{ipv6helper*,odhcpd-ipv6only*,odhcp6c*,6in4*} "files/www/ipv6-modules"
+            cp bin/targets/$TARGET/$SUBTARGET/packages/{ip6tables*,kmod-nf-nat6*,kmod-ipt-nat6*,kmod-sit*,kmod-ip6tables-extra*} "files/www/ipv6-modules"
+            mkdir -p files/bin
+            cp ../scripts/ipv6-helper.sh files/bin/ipv6-helper
+        fi
         make package/install -j$(nproc) || make package/install -j1 V=s
         make target/install -j$(nproc) || make target/install -j1 V=s
         make checksum
