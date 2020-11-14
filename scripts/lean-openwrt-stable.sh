@@ -107,6 +107,11 @@ popd
 #svn co https://github.com/openwrt/packages/trunk/libs/libssh
 #popd
 
+# Fix libyaml-cpp for subconverter
+pushd feeds/packages/libs
+rm -rf libyaml-cpp
+popd
+
 # Use Lienol's https-dns-proxy package
 pushd feeds/packages/net
 rm -rf https-dns-proxy
