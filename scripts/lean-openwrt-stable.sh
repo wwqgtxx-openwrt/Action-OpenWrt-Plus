@@ -120,7 +120,18 @@ popd
 # Use Lienol's https-dns-proxy package
 pushd feeds/packages/net
 rm -rf https-dns-proxy
-svn co https://github.com/wwqgtxx-openwrt/lienol-package/trunk/net/https-dns-proxy
+svn co https://github.com/wwqgtxx-openwrt/lienol-packages/trunk/net/https-dns-proxy
+popd
+
+# Use snapshots package
+pushd feeds/packages/utils
+#unneed to remove(stable version don't have utils/syncthing)
+#rm -rf syncthing
+svn co https://github.com/wwqgtxx-openwrt/packages-snapshots/trunk/utils/syncthing
+popd
+pushd feeds/packages/net
+rm -rf zerotier
+svn co https://github.com/wwqgtxx-openwrt/packages-snapshots/trunk/net/zerotier
 popd
 
 # Add po2lmo
