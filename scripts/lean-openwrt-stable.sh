@@ -112,6 +112,11 @@ pushd feeds/packages/libs
 rm -rf libyaml-cpp
 popd
 
+# remove ath10k(can't build success)
+pushd package/firmware
+rm -rf ath10k-firmware
+popd
+
 # Use Lienol's https-dns-proxy package
 pushd feeds/packages/net
 rm -rf https-dns-proxy
