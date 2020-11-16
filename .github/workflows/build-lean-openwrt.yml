@@ -18,6 +18,7 @@ on:
       - master
     paths:
       - 'config/lean/x86_64-lean-openwrt.config'
+      - 'config/lean/x86-lean-extra.config'
       - '.github/workflows/build-lean-openwrt.yml'
       - 'scripts/lean-openwrt.sh'
   schedule:
@@ -29,6 +30,7 @@ env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
   CONFIG_FILE: config/lean/x86_64-lean-openwrt.config
+  EXTRA_CONFIG_FILE: config/lean/x86-lean-extra.config
   DEVICE: openwrt-x86-64-generic
   DIY_SH: scripts/lean-openwrt.sh
   FEEDS_CONF: feeds.conf.default
@@ -67,7 +69,7 @@ jobs:
     - name: Update Feeds
       run: |
         cd openwrt
-        echo "::set-env name=OPENWRTROOT::$PWD"
+        echo "OPENWRTROOT=$PWD" >> $GITHUB_ENV
         ./scripts/feeds update -a
 
     - name: Install Feeds
@@ -80,9 +82,12 @@ jobs:
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
         [ -e files ] && mv files $OPENWRTROOT/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE $OPENWRTROOT/.config
-        chmod +x $DIY_SH
+        cat $EXTRA_CONFIG_FILE >> $OPENWRTROOT/.config
+        chmod +x scripts/*.sh
         cd $OPENWRTROOT
         ../$DIY_SH
+        ../scripts/preset-clash-core.sh amd64
+        ../scripts/preset-terminal-tools.sh
 
     - name: SSH Connection To Actions
       uses: P3TERX/debugger-action@main
@@ -116,21 +121,17 @@ jobs:
         make diffconfig
         make package/compile -j$(nproc) IGNORE_ERRORS=1 || make package/compile -j1 V=s IGNORE_ERRORS=1
         make package/index
-        echo "::set-output name=status::success"
-
-    - name: Set Environment Variable
-      if: steps.compile.outputs.status == 'success'
-      run: |
         cd $OPENWRTROOT/bin/packages/*
         PLATFORM=$(basename `pwd`)
-        echo "::set-env name=PLATFORM::$PLATFORM"
+        echo "PLATFORM=$PLATFORM" >> $GITHUB_ENV
         cd $OPENWRTROOT/bin/targets/*
         TARGET=$(basename `pwd`)
-        echo "::set-env name=TARGET::$TARGET"
+        echo "TARGET=$TARGET" >> $GITHUB_ENV
         cd *
         SUBTARGET=$(basename `pwd`)
-        echo "::set-env name=SUBTARGET::$SUBTARGET"
-        echo "::set-env name=FIRMWARE::$PWD"
+        echo "SUBTARGET=$SUBTARGET" >> $GITHUB_ENV
+        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+        echo "::set-output name=status::success"
 
     - name: Generate Firmware
       if: steps.compile.outputs.status == 'success'
@@ -152,19 +153,21 @@ jobs:
             sed -i "s/target\//$TARGET\//g" files/etc/opkg/distfeeds.conf
             sed -i "s/platform/$PLATFORM/g" files/etc/opkg/distfeeds.conf
         fi
-        wget https://github.com/wwqgtxx/clashr/releases/download/v1.0.0.3/clashr-linux-amd64-v1.0.0.3.gz
-        gunzip clashr-linux-amd64-v1.0.0.3.gz
-        chmod +x clashr-linux-amd64-v1.0.0.3
-        mkdir -p files/etc/openclash/core
-        cp clashr-linux-amd64-v1.0.0.3 files/etc/openclash/core/clash
-        cp clashr-linux-amd64-v1.0.0.3 files/etc/openclash/core/clash_game
-        rm clashr-linux-amd64-v1.0.0.3
+        if "$IPV6MOD_IN_FIRMWARE" = 'true'
+        then
+            mkdir -p files/www/ipv6-modules
+            cp bin/packages/$PLATFORM/luci/luci-proto-ipv6* files/www/ipv6-modules
+            cp bin/packages/$PLATFORM/base/{ipv6helper*,odhcpd-ipv6only*,odhcp6c*,6in4*} "files/www/ipv6-modules"
+            cp bin/targets/$TARGET/$SUBTARGET/packages/{ip6tables*,kmod-nf-nat6*,kmod-ipt-nat6*,kmod-sit*,kmod-ip6tables-extra*} "files/www/ipv6-modules"
+            mkdir -p files/bin
+            cp ../scripts/ipv6-helper.sh files/bin/ipv6-helper
+        fi
         make package/install -j$(nproc) || make package/install -j1 V=s
         make target/install -j$(nproc) || make target/install -j1 V=s
         make checksum
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
-        [ -s DEVICE_NAME ] && echo "::set-env name=DEVICE_NAME::_$(cat DEVICE_NAME)"
-        echo "::set-env name=FILE_DATE::_$(date +"%Y%m%d%H%M")"
+        [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
+        echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
         echo "::set-output name=status::success"
         
     - name: Deploy Packages-Server
