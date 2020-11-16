@@ -125,8 +125,7 @@ popd
 
 # Use snapshots package
 pushd feeds/packages/utils
-#unneed to remove(stable version don't have utils/syncthing)
-#rm -rf syncthing
+rm -rf syncthing
 svn co https://github.com/wwqgtxx-openwrt/packages-snapshots/trunk/utils/syncthing
 popd
 pushd feeds/packages/net
