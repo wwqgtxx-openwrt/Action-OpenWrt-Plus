@@ -39,7 +39,7 @@ env:
   SSH_ACTIONS: false
   KMODS_IN_FIRMWARE: true
   BUILD_EXT4: false
-  UPLOAD_BIN_DIR: true
+  UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   TZ: Asia/Shanghai
 
