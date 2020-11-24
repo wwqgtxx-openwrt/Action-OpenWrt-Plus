@@ -21,6 +21,8 @@ on:
       - 'config/lean/x86-lean-extra.config'
       - '.github/workflows/build-lean-openwrt.yml'
       - 'scripts/lean-openwrt.sh'
+      - 'scripts/preset-clash-core.sh'
+      - 'scripts/init-env.sh'
   schedule:
     - cron: 0 18 * * *
 #  watch:
@@ -42,9 +44,8 @@ env:
   TZ: Asia/Shanghai
 
 jobs:
-  build:
+  job-01:
     runs-on: ubuntu-18.04
-#    if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
     - name: Checkout
@@ -54,12 +55,8 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
-        sudo -E apt-get -qq update
-        sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf python2.7 python3 wget rsync swig
-        sudo -E apt-get -qq autoremove --purge
-        sudo -E apt-get -qq clean
-        sudo timedatectl set-timezone "$TZ"
+        chmod +x scripts/*.sh
+        ./scripts/init-env.sh
 
     - name: Clone Source Code
       run: |
@@ -69,6 +66,7 @@ jobs:
     - name: Update Feeds
       run: |
         cd openwrt
+        echo "OPENWRTROOT=$PWD"
         echo "OPENWRTROOT=$PWD" >> $GITHUB_ENV
         ./scripts/feeds update -a
 
@@ -83,15 +81,10 @@ jobs:
         [ -e files ] && mv files $OPENWRTROOT/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE $OPENWRTROOT/.config
         cat $EXTRA_CONFIG_FILE >> $OPENWRTROOT/.config
-        chmod +x scripts/*.sh
         cd $OPENWRTROOT
         ../$DIY_SH
         ../scripts/preset-clash-core.sh amd64
         ../scripts/preset-terminal-tools.sh
-
-    - name: SSH Connection To Actions
-      uses: P3TERX/debugger-action@main
-      if: env.SSH_ACTIONS == 'true' || contains(github.event.action, 'ssh')
 
     - name: Download Package
       id: package
@@ -110,11 +103,53 @@ jobs:
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
 
+    - name: Make Zip
+      id: zip
+      run: |
+        zip -q -y -r temp.zip openwrt
+        echo "::set-output name=status::success"
+
+    - name: Upload result for job 01
+      if: steps.zip.outputs.status == 'success'
+      uses: actions/upload-artifact@v2
+      with:
+        name: temp.zip
+        path: temp.zip
+          
+        
+  job-02:
+    runs-on: ubuntu-18.04
+    needs: job-01
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+
+    - name: Initialization Environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        chmod +x scripts/*.sh
+        ./scripts/init-env.sh
+
+    - name: Download result for job 01
+      uses: actions/download-artifact@v2
+      with:
+        name: temp.zip
+
+    - name: UnZip
+      run: |
+        unzip -q temp.zip
+        rm temp.zip
+        cd openwrt
+        echo "OPENWRTROOT=$PWD" >> $GITHUB_ENV
+        cd po2lmo
+        sudo make install
+
     - name: Compile Packages
       id: compile
       run: |
         cd $OPENWRTROOT
-        echo -e "$(nproc) thread compile"
+        echo -e "$(($(nproc) + 1)) thread compile"
         make tools/compile -j$(($(nproc) + 1)) || make tools/compile -j1 V=s
         make toolchain/compile -j$(($(nproc) + 1)) || make toolchain/compile -j1 V=s
         make target/compile -j$(($(nproc) + 1)) || make target/compile -j1 V=s IGNORE_ERRORS=1
@@ -169,6 +204,13 @@ jobs:
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
         echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
         echo "::set-output name=status::success"
+
+    - name: Upload Bin Directory
+      uses: actions/upload-artifact@main
+      if: steps.generate.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
+      with:
+        name: openwrt-bin-directory${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+        path: openwrt/bin
         
     - name: Deploy Packages-Server
       if: steps.generate.outputs.status == 'success'
