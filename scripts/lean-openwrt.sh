@@ -20,6 +20,9 @@ pushd package/community
 # Add Lienol's Packages
 git clone --depth=1 https://github.com/Lienol/openwrt-package
 
+# Add luci-app-passwall
+git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall
+
 # Add luci-app-vssr <M>
 git clone --depth=1 https://github.com/jerrykuku/luci-app-vssr
 git clone --depth=1 https://github.com/jerrykuku/lua-maxminddb
@@ -58,9 +61,6 @@ git clone --depth=1 https://github.com/lisaac/luci-lib-docker
 # Add luci-app-gowebdav
 git clone --depth=1 https://github.com/project-openwrt/openwrt-gowebdav
 
-# Add luci-app-jd-dailybonus
-git clone --depth=1 https://github.com/jerrykuku/luci-app-jd-dailybonus
-
 # Add luci-theme-argon
 git clone --depth=1 -b 18.06 https://github.com/jerrykuku/luci-theme-argon
 git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config
@@ -79,20 +79,25 @@ svn co https://github.com/project-openwrt/openwrt/trunk/package/ctcgfw/gotop
 svn co https://github.com/pymumu/smartdns/trunk/package/openwrt ../smartdns
 svn co https://github.com/project-openwrt/openwrt/trunk/package/ntlf9t/luci-app-smartdns ../luci-app-smartdns
 
-# Add udptools
-git clone --depth=1 https://github.com/bao3/openwrt-udp2raw
-git clone --depth=1 https://github.com/bao3/openwrt-udpspeeder
-git clone --depth=1 https://github.com/bao3/luci-udptools
+# Add luci-udptools
+git clone --depth=1 https://github.com/zcy85611/openwrt-luci-kcp-udp
 
 # Add OpenAppFilter
 git clone --depth=1 https://github.com/destan19/OpenAppFilter
+
+# Add luci-app-oled (R2S Only)
+git clone --depth=1 https://github.com/NateLol/luci-app-oled
+
+# Add driver for rtl8821cu & rtl8812au-ac
+svn co https://github.com/project-openwrt/openwrt/branches/master/package/ctcgfw/rtl8812au-ac
+svn co https://github.com/project-openwrt/openwrt/branches/master/package/ctcgfw/rtl8821cu
 popd
 
 # Mod zzz-default-settings
 pushd package/lean/default-settings/files
-sed -i "/commit luci/i\uci set luci.main.mediaurlbase='/luci-static/argon'" zzz-default-settings
 sed -i '/http/d' zzz-default-settings
-sed -i '/exit/i\chmod +x /bin/ipv6-helper' zzz-default-settings
+export orig_version="$(cat "zzz-default-settings" | grep DISTRIB_REVISION= | awk -F "'" '{print $2}')"
+sed -i "s/${orig_version}/${orig_version} ($(date +"%Y-%m-%d"))/g" zzz-default-settings
 popd
 
 # Fix libssh
@@ -107,20 +112,14 @@ rm -rf https-dns-proxy
 svn co https://github.com/Lienol/openwrt-packages/trunk/net/https-dns-proxy
 popd
 
-# Use snapshots package
+# Use snapshots syncthing package
 pushd feeds/packages/utils
 rm -rf syncthing
 svn co https://github.com/openwrt/packages/trunk/utils/syncthing
 popd
-pushd feeds/packages/net
-rm -rf zerotier
-svn co https://github.com/openwrt/packages/trunk/net/zerotier
-popd
 
 # Fix mt76 wireless driver
 pushd package/kernel/mt76
-rm -f Makefile
-wget https://raw.githubusercontent.com/openwrt/openwrt/master/package/kernel/mt76/Makefile
 sed -i '/mt7662u_rom_patch.bin/a\\techo mt76-usb disable_usb_sg=1 > $\(1\)\/etc\/modules.d\/mt76-usb' Makefile
 popd
 

@@ -24,6 +24,9 @@ pushd package/community
 # Add Lienol's Packages
 git clone --depth=1 https://github.com/wwqgtxx-openwrt/lienol-package
 
+# Add luci-app-passwall
+git clone --depth=1 https://github.com/wwqgtxx-openwrt/openwrt-passwall
+
 # Add luci-app-vssr <M>
 git clone --depth=1 https://github.com/wwqgtxx-openwrt/luci-app-vssr
 git clone --depth=1 https://github.com/wwqgtxx-openwrt/lua-maxminddb
@@ -31,6 +34,10 @@ git clone --depth=1 https://github.com/wwqgtxx-openwrt/lua-maxminddb
 # Add mentohust & luci-app-mentohust.
 git clone --depth=1 https://github.com/wwqgtxx-openwrt/luci-app-mentohust
 git clone --depth=1 https://github.com/wwqgtxx-openwrt/MentoHUST-OpenWrt-ipk
+
+# Add minieap & luci-proto-minieap
+git clone --depth=1 https://github.com/wwqgtxx/luci-proto-minieap
+svn co https://github.com/wwqgtxx-openwrt/project-openwrt/trunk/package/ntlf9t/minieap
 
 # Add ServerChan
 git clone --depth=1 https://github.com/wwqgtxx-openwrt/luci-app-serverchan
@@ -57,10 +64,6 @@ git clone --depth=1 https://github.com/wwqgtxx-openwrt/luci-lib-docker
 # Add luci-app-gowebdav
 git clone --depth=1 https://github.com/wwqgtxx-openwrt/openwrt-gowebdav
 
-# Add luci-app-jd-dailybonus
-git clone --depth=1 https://github.com/wwqgtxx-openwrt/node-request
-git clone --depth=1 https://github.com/wwqgtxx-openwrt/luci-app-jd-dailybonus
-
 # Add luci-theme-argon
 git clone --depth=1 -b 18.06 https://github.com/wwqgtxx-openwrt/luci-theme-argon
 git clone --depth=1 https://github.com/wwqgtxx-openwrt/luci-app-argon-config
@@ -75,20 +78,12 @@ git clone --depth=1 https://github.com/wwqgtxx-openwrt/openwrt-subconverter
 # Add gotop
 svn co https://github.com/wwqgtxx-openwrt/project-openwrt/trunk/package/ctcgfw/gotop
 
-# Subscribe converters
-#svn co https://github.com/wwqgtxx-openwrt/project-openwrt/trunk/package/ctcgfw/subconverter
-#svn co https://github.com/wwqgtxx-openwrt/project-openwrt/trunk/package/ctcgfw/jpcre2
-#svn co https://github.com/wwqgtxx-openwrt/project-openwrt/trunk/package/ctcgfw/rapidjson
-#svn co https://github.com/wwqgtxx-openwrt/project-openwrt/trunk/package/ctcgfw/duktape
-
 # Add smartdns
 svn co https://github.com/wwqgtxx-openwrt/smartdns/trunk/package/openwrt ../smartdns
 svn co https://github.com/wwqgtxx-openwrt/project-openwrt/trunk/package/ntlf9t/luci-app-smartdns ../luci-app-smartdns
 
-# Add udptools
-git clone --depth=1 https://github.com/wwqgtxx-openwrt/openwrt-udp2raw
-git clone --depth=1 https://github.com/wwqgtxx-openwrt/openwrt-udpspeeder
-git clone --depth=1 https://github.com/wwqgtxx-openwrt/luci-udptools
+# Add luci-udptools
+git clone --depth=1 https://github.com/wwqgtxx-openwrt/openwrt-luci-kcp-udp
 
 # Add OpenAppFilter
 git clone --depth=1 https://github.com/wwqgtxx-openwrt/OpenAppFilter
@@ -96,9 +91,9 @@ popd
 
 # Mod zzz-default-settings
 pushd package/lean/default-settings/files
-sed -i "/commit luci/i\uci set luci.main.mediaurlbase='/luci-static/argon'" zzz-default-settings
 sed -i '/http/d' zzz-default-settings
-sed -i '/exit/i\chmod +x /bin/ipv6-helper' zzz-default-settings
+export orig_version="$(cat "zzz-default-settings" | grep DISTRIB_REVISION= | awk -F "'" '{print $2}')"
+sed -i "s/${orig_version}/${orig_version} ($(date +"%Y-%m-%d"))/g" zzz-default-settings
 popd
 
 # Fix libssh
