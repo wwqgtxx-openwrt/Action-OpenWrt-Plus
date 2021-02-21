@@ -20,9 +20,9 @@ mkdir -p files/etc/openclash/core
 #wget -qO- $clash_tun_url | gunzip -c > files/etc/openclash/core/clash_tun
 #wget -qO- $clash_game_url | tar xOvz > files/etc/openclash/core/clash_game
 
-clash_main_url=https://github.com/wwqgtxx/clashr/releases/download/v1.3.0.2/clashr-linux-amd64-v1.3.0.2.gz
+clash_main_url=https://github.com/wwqgtxx/clashr/releases/download/v1.4.0.2/clashr-linux-amd64-v1.4.0.2.gz
 clash_tun_url=$(curl -sL https://api.github.com/repos/vernesong/OpenClash/releases/tags/TUN-Premium | grep /clash-linux-$1 | sed 's/.*url\": \"//g' | sed 's/\"//g')
-clash_game_url=https://github.com/wwqgtxx/clashr/releases/download/v1.3.0.2-tun/clashr-linux-amd64-v1.3.0.2-tun.gz
+clash_game_url=https://github.com/wwqgtxx/clashr/releases/download/v1.4.0.2-tun/clashr-linux-amd64-v1.4.0.2-tun.gz
 
 wget -qO- $clash_main_url | gunzip -c > files/etc/openclash/core/clash
 wget -qO- $clash_tun_url | gunzip -c > files/etc/openclash/core/clash_tun
