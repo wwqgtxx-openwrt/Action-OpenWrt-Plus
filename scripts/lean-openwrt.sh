@@ -124,7 +124,7 @@ sed -i '/mt7662u_rom_patch.bin/a\\techo mt76-usb disable_usb_sg=1 > $\(1\)\/etc\
 popd
 
 # Add po2lmo
-git clone https://github.com/openwrt-dev/po2lmo.git
+git clone https://github.com/wwqgtxx-openwrt/po2lmo.git
 pushd po2lmo
 make && sudo make install
 popd
